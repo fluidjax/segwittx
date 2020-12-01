@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="2d176481-fb27-4f8a-aea7-223b96c1471b" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go File" />
+      </list>
+    </option>
+  </component>
+  <component name="GOROOT" path="/usr/local/Cellar/go/1.15.1/libexec" />
+  <component name="GitToolBoxStore">
+    <option name="projectConfigVersion" value="2" />
+  </component>
+  <component name="ProjectId" id="1krjeGVUN7HCLyrwmwpByw1zaYm" />
+  <component name="ProjectViewState">
+    <option name="autoscrollToSource" value="true" />
+    <option name="foldersAlwaysOnTop" value="false" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="sortByType" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultGoTemplateProperty" value="Go File" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="go.import.settings.migrated" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/.." />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+  </component>
+  <component name="RunManager" selected="Go Build.go build doit.go">
+    <configuration name="go build awesomeProject1" type="GoApplicationRunConfiguration" factoryName="Go Application" nameIsGenerated="true">
+      <module name="awesomeProject1" />
+      <working_directory value="$PROJECT_DIR$" />
+      <go_parameters value="-i" />
+      <EXTENSION ID="net.ashald.envfile">
+        <option name="IS_ENABLED" value="false" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" />
+        </ENTRIES>
+      </EXTENSION>
+      <kind value="DIRECTORY" />
+      <filePath value="$PROJECT_DIR$" />
+      <directory value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build doit.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="awesomeProject1" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/doit.go" />
+      <directory value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Go Build.go build awesomeProject1" />
+      <item itemvalue="Go Build.go build doit.go" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Build.go build doit.go" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="753" y="328" width="1079" height="748" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1606465780043">
+      <screen x="0" y="23" width="2560" height="1362" />
+    </state>
+    <state x="753" y="328" width="1079" height="748" key="#com.intellij.execution.impl.EditConfigurationsDialog/2560.23.2560.1417/0.23.2560.1362/-2560.23.2560.1417@0.23.2560.1362" timestamp="1606465780043" />
+    <state width="959" height="606" key="DebuggerActiveHint" timestamp="1606815861586">
+      <screen x="2560" y="23" width="2560" height="1417" />
+    </state>
+    <state width="959" height="606" key="DebuggerActiveHint/2560.23.2560.1417/0.23.2560.1361/-2560.23.2560.1417@2560.23.2560.1417" timestamp="1606815861586" />
+    <state width="959" height="582" key="DebuggerActiveHint/2560.23.2560.1417/0.23.2560.1363/-2560.23.2560.1417@0.23.2560.1363" timestamp="1606471695461" />
+    <state width="959" height="606" key="DebuggerActiveHint/2560.23.2560.1417/0.23.2560.1363/-2560.23.2560.1417@2560.23.2560.1417" timestamp="1606480302575" />
+    <state width="2435" height="304" key="GridCell.Tab.0.bottom" timestamp="1606815708472">
+      <screen x="2560" y="23" width="2560" height="1417" />
+    </state>
+    <state width="2403" height="183" key="GridCell.Tab.0.bottom/2560.23.2560.1417/0.23.2560.1357/-2560.23.2560.1417@0.23.2560.1357" timestamp="1606723877595" />
+    <state width="2403" height="183" key="GridCell.Tab.0.bottom/2560.23.2560.1417/0.23.2560.1357/-2560.23.2560.1417@2560.23.2560.1417" timestamp="1606734030436" />
+    <state width="2435" height="304" key="GridCell.Tab.0.bottom/2560.23.2560.1417/0.23.2560.1361/-2560.23.2560.1417@2560.23.2560.1417" timestamp="1606815708472" />
+    <state width="2403" height="478" key="GridCell.Tab.0.bottom/2560.23.2560.1417/0.23.2560.1362/-2560.23.2560.1417@2560.23.2560.1417" timestamp="1606486776555" />
+    <state width="2403" height="242" key="GridCell.Tab.0.bottom/2560.23.2560.1417/0.23.2560.1363/-2560.23.2560.1417@0.23.2560.1363" timestamp="1606479101212" />
+    <state width="2403" height="253" key="GridCell.Tab.0.bottom/2560.23.2560.1417/0.23.2560.1363/-2560.23.2560.1417@2560.23.2560.1417" timestamp="1606480326865" />
+    <state width="2435" height="304" key="GridCell.Tab.0.center" timestamp="1606815708472">
+      <screen x="2560" y="23" width="2560" height="1417" />
+    </state>
+    <state width="2403" height="183" key="GridCell.Tab.0.center/2560.23.2560.1417/0.23.2560.1357/-2560.23.2560.1417@0.23.2560.1357" timestamp="1606723877594" />
+    <state width="2403" height="183" key="GridCell.Tab.0.center/2560.23.2560.1417/0.23.2560.1357/-2560.23.2560.1417@2560.23.2560.1417" timestamp="1606734030434" />
+    <state width="2435" height="304" key="GridCell.Tab.0.center/2560.23.2560.1417/0.23.2560.1361/-2560.23.2560.1417@2560.23.2560.1417" timestamp="1606815708472" />
+    <state width="2403" height="478" key="GridCell.Tab.0.center/2560.23.2560.1417/0.23.2560.1362/-2560.23.2560.1417@2560.23.2560.1417" timestamp="1606486776554" />
+    <state width="2403" height="242" key="GridCell.Tab.0.center/2560.23.2560.1417/0.23.2560.1363/-2560.23.2560.1417@0.23.2560.1363" timestamp="1606479101211" />
+    <state width="2403" height="253" key="GridCell.Tab.0.center/2560.23.2560.1417/0.23.2560.1363/-2560.23.2560.1417@2560.23.2560.1417" timestamp="1606480326864" />
+    <state width="2435" height="304" key="GridCell.Tab.0.left" timestamp="1606815708471">
+      <screen x="2560" y="23" width="2560" height="1417" />
+    </state>
+    <state width="2403" height="183" key="GridCell.Tab.0.left/2560.23.2560.1417/0.23.2560.1357/-2560.23.2560.1417@0.23.2560.1357" timestamp="1606723877594" />
+    <state width="2403" height="183" key="GridCell.Tab.0.left/2560.23.2560.1417/0.23.2560.1357/-2560.23.2560.1417@2560.23.2560.1417" timestamp="1606734030434" />
+    <state width="2435" height="304" key="GridCell.Tab.0.left/2560.23.2560.1417/0.23.2560.1361/-2560.23.2560.1417@2560.23.2560.1417" timestamp="1606815708471" />
+    <state width="2403" height="478" key="GridCell.Tab.0.left/2560.23.2560.1417/0.23.2560.1362/-2560.23.2560.1417@2560.23.2560.1417" timestamp="1606486776554" />
+    <state width="2403" height="242" key="GridCell.Tab.0.left/2560.23.2560.1417/0.23.2560.1363/-2560.23.2560.1417@0.23.2560.1363" timestamp="1606479101211" />
+    <state width="2403" height="253" key="GridCell.Tab.0.left/2560.23.2560.1417/0.23.2560.1363/-2560.23.2560.1417@2560.23.2560.1417" timestamp="1606480326864" />
+    <state width="2435" height="304" key="GridCell.Tab.0.right" timestamp="1606815708472">
+      <screen x="2560" y="23" width="2560" height="1417" />
+    </state>
+    <state width="2403" height="183" key="GridCell.Tab.0.right/2560.23.2560.1417/0.23.2560.1357/-2560.23.2560.1417@0.23.2560.1357" timestamp="1606723877595" />
+    <state width="2403" height="183" key="GridCell.Tab.0.right/2560.23.2560.1417/0.23.2560.1357/-2560.23.2560.1417@2560.23.2560.1417" timestamp="1606734030435" />
+    <state width="2435" height="304" key="GridCell.Tab.0.right/2560.23.2560.1417/0.23.2560.1361/-2560.23.2560.1417@2560.23.2560.1417" timestamp="1606815708472" />
+    <state width="2403" height="478" key="GridCell.Tab.0.right/2560.23.2560.1417/0.23.2560.1362/-2560.23.2560.1417@2560.23.2560.1417" timestamp="1606486776555" />
+    <state width="2403" height="242" key="GridCell.Tab.0.right/2560.23.2560.1417/0.23.2560.1363/-2560.23.2560.1417@0.23.2560.1363" timestamp="1606479101211" />
+    <state width="2403" height="253" key="GridCell.Tab.0.right/2560.23.2560.1417/0.23.2560.1363/-2560.23.2560.1417@2560.23.2560.1417" timestamp="1606480326864" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/doit.go</url>
+          <line>66</line>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/../go/src/github.com/btcsuite/btcd/wire/msgtx.go</url>
+          <line>699</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/../go/src/github.com/btcsuite/btcd/wire/msgtx.go</url>
+          <line>735</line>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
