@@ -6,9 +6,7 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
-
 	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"github.com/btcsuite/btcd/txscript"
 	"github.com/btcsuite/btcd/wire"
 	"github.com/btcsuite/btcutil"
@@ -23,60 +21,94 @@ type Transaction struct {
 	SignedTx           string `json:"signedtx"`
 }
 
+func main() {
+
+	//CreateTransaction("93KWUgeZET9vTXLoiVmDNJePrVJVmht2UhUtNK78WKHYbf5YaRc", "mzfrHhpyqVdBYPUtoRtuuoBT9bh9cFG388", 1000, "9ad8beecf52bf55580a359684ff506346b00bc06583336dc0f618af4574ab9bd",&chaincfg.TestNet3Params)
+	//CreateTransaction("92M2DhFHasE9S66UEFmcvYAKRdHnEn7DmD3cFj1Dk7SSiTGV3Ys", "tb1qs6afttm4wkvfueef8djrphmnkcpyjhqjfa6skw", 1000, "c8dafd427a9744bcd97fe4a3d045c9d49679b0d9d27141e76d4e198f929bffda",&chaincfg.TestNet3Params)
+
+
+	CreateTransaction("933a8EfDJfescwYXSbqvkvWF1SnLcQ9fcChrcSy1ii8SufbEzwj", "2N4LyCq2xZnEfP5qm7GgvsqSosUMBBTq1GS", 1000, "6615134f20390fbb8bec4b0373988efa1f8ef9f56de6c495a37b8188ee2c6fec",&chaincfg.TestNet3Params)
+
+
+}
+
 func CreateTransaction(secret string, destination string, amount int64, txHash string, chain *chaincfg.Params ) (error) {
+	wif, _ := btcutil.DecodeWIF(secret)
 
-	wif, err := btcutil.DecodeWIF(secret)
-	addresspubkey, _ := btcutil.NewAddressPubKey(wif.PrivKey.PubKey().SerializeUncompressed(),chain)
+	addr, _ := btcutil.DecodeAddress(destination, chain)
+	fmt.Println("string addr", addr.String())
 
-
-	sourceTx := wire.NewMsgTx(wire.TxVersion)
-
-	sourceUtxoHash, _ := chainhash.NewHashFromStr(txHash)
-	sourceUtxo := wire.NewOutPoint(sourceUtxoHash, 0)
+	p2shAddr, _ := txscript.PayToAddrScript(addr)
+	fmt.Println("string p2shAddr", hex.EncodeToString(p2shAddr))
 
 
-	sourceTxIn := wire.NewTxIn(sourceUtxo, nil, nil)
-	destinationAddress, err := btcutil.DecodeAddress(destination,chain)
 
-	sourceAddress, err := btcutil.DecodeAddress(addresspubkey.EncodeAddress(),chain)
-	if err != nil {
-		return  err
+	utxOut := wire.NewTxOut(amount, p2shAddr)
+	incomingTx := &wire.MsgTx{
+		TxIn:  []*wire.TxIn{{}},
+		TxOut: []*wire.TxOut{utxOut},
 	}
-	destinationPkScript, _ := txscript.PayToAddrScript(destinationAddress)
-	sourcePkScript, _ := txscript.PayToAddrScript(sourceAddress)
+
+	prevOut := wire.OutPoint{
+		Hash:  incomingTx.TxHash(),
+		Index: 0,
+	}
+
+	fmt.Println("incomingTx.TxHash()", incomingTx.TxHash().String())
 
 
+	outgoingTx := &wire.MsgTx{
+		TxIn: []*wire.TxIn{{
+			PreviousOutPoint: prevOut,
+		}},
+		TxOut: []*wire.TxOut{utxOut},
+	}
+	sigHashes := txscript.NewTxSigHashes(outgoingTx)
 
-	sourceTxOut := wire.NewTxOut(amount, sourcePkScript)
-	sourceTx.AddTxIn(sourceTxIn)
-	sourceTx.AddTxOut(sourceTxOut)
-	sourceTxHash := sourceTx.TxHash()
-	redeemTx := wire.NewMsgTx(wire.TxVersion)
-	prevOut := wire.NewOutPoint(&sourceTxHash, 0)
-	redeemTxIn := wire.NewTxIn(prevOut, nil, nil)
-	redeemTx.AddTxIn(redeemTxIn)
-	redeemTxOut := wire.NewTxOut(amount, destinationPkScript)
-	redeemTx.AddTxOut(redeemTxOut)
+	witness, script, _ := ComputeInputScript(wif, outgoingTx, utxOut, 0,sigHashes, txscript.SigHashAll, chain)
 
-	sigHashes := txscript.NewTxSigHashes(redeemTx)
+	for a,_ := range witness {
+		fmt.Println("Witness ",a,hex.EncodeToString(witness[a]))
+	}
+	fmt.Println("script", hex.EncodeToString(script))
 
-	witness, script, err := ComputeInputScript(wif, redeemTx, sourceTxOut, 0, sigHashes, txscript.SigHashAll,chain)
-	redeemTx.TxIn[0].Witness = witness
-	redeemTx.TxIn[0].SignatureScript = script
-
-
+	outgoingTx.TxIn[0].Witness = witness
+	outgoingTx.TxIn[0].SignatureScript = script
 	///////////////////
-	buf := new(bytes.Buffer)
-	err = redeemTx.Serialize(buf)
-	print(hex.EncodeToString(buf.Bytes()))
 
+	err := validateMsgTx(outgoingTx, [][]byte{utxOut.PkScript}, []btcutil.Amount{1000},)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	buf := new(bytes.Buffer)
+	_ = outgoingTx.Serialize(buf)
+	print(hex.EncodeToString(buf.Bytes()))
 	return  nil
+}
+
+
+func validateMsgTx(tx *wire.MsgTx, prevScripts [][]byte, inputValues []btcutil.Amount) error {
+	hashCache := txscript.NewTxSigHashes(tx)
+	for i, prevScript := range prevScripts {
+		vm, err := txscript.NewEngine(prevScript, tx, i,
+			txscript.StandardVerifyFlags, nil, hashCache, int64(inputValues[i]))
+		if err != nil {
+			return fmt.Errorf("cannot create script engine: %s", err)
+		}
+		err = vm.Execute()
+		if err != nil {
+			return fmt.Errorf("cannot validate transaction: %s", err)
+		}
+	}
+	return nil
 }
 
 
 func ComputeInputScript(wif *btcutil.WIF, tx *wire.MsgTx, output *wire.TxOut,	inputIndex int, sigHashes *txscript.TxSigHashes,hashType txscript.SigHashType,chain *chaincfg.Params) (wire.TxWitness,
 	[]byte, error) {
 
+	wif.CompressPubKey = true
 	pubKey := wif.SerializePubKey()
 	privKey := wif.PrivKey
 
@@ -85,6 +117,7 @@ func ComputeInputScript(wif *btcutil.WIF, tx *wire.MsgTx, output *wire.TxOut,	in
 		sigScript      []byte
 	)
 	pubKeyHash := btcutil.Hash160(pubKey)
+	fmt.Println("pubKeyHash ",hex.EncodeToString(pubKeyHash))
 
 	// Next, we'll generate a valid sigScript that will allow us to
 	// spend the p2sh output. The sigScript will contain only a
@@ -95,6 +128,8 @@ func ComputeInputScript(wif *btcutil.WIF, tx *wire.MsgTx, output *wire.TxOut,	in
 		return nil, nil, err
 	}
 	witnessProgram, err = txscript.PayToAddrScript(p2wkhAddr)
+	fmt.Println("witnessProgram ",hex.EncodeToString(witnessProgram))
+
 	if err != nil {
 		return nil, nil, err
 	}
@@ -124,77 +159,91 @@ func ComputeInputScript(wif *btcutil.WIF, tx *wire.MsgTx, output *wire.TxOut,	in
 	return witnessScript, sigScript, nil
 }
 
-func OriginalCreateTransaction(secret string, destination string, amount int64, txHash string)  {
-	//chain :=  &chaincfg.MainNetParams
-	chain :=  &chaincfg.TestNet3Params
 
-	//var transaction Transaction
-	wif, err := btcutil.DecodeWIF(secret)
-	//if err != nil {
-	//	return Transaction{}, err
-	//}
-	//addresspubkey, _ := btcutil.NewAddressPubKey(wif.PrivKey.PubKey().SerializeUncompressed(), chain)
-	//sourceTx := wire.NewMsgTx(wire.TxVersion)
-	//sourceUtxoHash, _ := chainhash.NewHashFromStr(txHash)
-	//sourceUtxo := wire.NewOutPoint(sourceUtxoHash, 0)
-	//sourceTxIn := wire.NewTxIn(sourceUtxo, nil, nil)
+//func Segwit(secret string, destination string, amount int64, txHash string)  {
+//	chain :=  &chaincfg.TestNet3Params
+//	wif, _ := btcutil.DecodeWIF(secret)
+//
+//
+//
+//	redeemTx := wire.NewMsgTx(wire.TxVersion)
+//	sourceTxHash, _ := chainhash.NewHashFromStr(txHash)
+//	prevOut := wire.NewOutPoint(sourceTxHash, 0)
+//	redeemTxIn := wire.NewTxIn(prevOut, nil, nil)
+//	redeemTx.AddTxIn(redeemTxIn)
+//
+//	destinationAddress, _ := btcutil.DecodeAddress(destination, chain)
+//	destinationPkScript, _ := txscript.PayToAddrScript(destinationAddress)
+//	redeemTxOut := wire.NewTxOut(amount, destinationPkScript)
+//	redeemTx.AddTxOut(redeemTxOut)
+//	//inputScript,_ := hex.DecodeString("a91422d90622f1a8cda9260f5e287a880eb3b9f52eb287")
+//	sigHashes := txscript.NewTxSigHashes(redeemTx)
+//
+//	witness, script, _ := ComputeInputScript2(wif, redeemTx, int64(100), 0, sigHashes, txscript.SigHashAll,chain)
+//	redeemTx.TxIn[0].Witness = witness
+//	redeemTx.TxIn[0].SignatureScript = script
+//
+//
+//	var signedTx bytes.Buffer
+//	redeemTx.Serialize(&signedTx)
+//	fmt.Println(hex.EncodeToString(signedTx.Bytes()))
+//}
 
-	//sourceAddress, err := btcutil.DecodeAddress(addresspubkey.EncodeAddress(),chain)
-	//if err != nil {
-	//	return Transaction{}, err
-	//}
-
-	//sourcePkScript, _ := txscript.PayToAddrScript(sourceAddress)
-	//sourceTxOut := wire.NewTxOut(amount, sourcePkScript)
-	//sourceTx.AddTxIn(sourceTxIn)
-	//sourceTx.AddTxOut(sourceTxOut)
-	//sourceTxHash := sourceTx.TxHash()
-
-	redeemTx := wire.NewMsgTx(wire.TxVersion)
-
-	sourceTxHash, _ := chainhash.NewHashFromStr(txHash)
-	prevOut := wire.NewOutPoint(sourceTxHash, 0)
-	redeemTxIn := wire.NewTxIn(prevOut, nil, nil)
-	redeemTx.AddTxIn(redeemTxIn)
-
-	destinationAddress, err := btcutil.DecodeAddress(destination, chain)
-	destinationPkScript, _ := txscript.PayToAddrScript(destinationAddress)
-	redeemTxOut := wire.NewTxOut(amount, destinationPkScript)
-	redeemTx.AddTxOut(redeemTxOut)
-
-	inputScript,_ := hex.DecodeString("76a914ee37c1c620fdee0bcab60148719ed839b122b2d388ac")
-
-	sigScript, err := txscript.SignatureScript(redeemTx, 0, inputScript, txscript.SigHashAll, wif.PrivKey, false)
-	if err != nil {
-		return
-	}
-	redeemTx.TxIn[0].SignatureScript = sigScript
-	flags := txscript.StandardVerifyFlags
-	vm, err := txscript.NewEngine(inputScript, redeemTx, 0, flags, nil, nil, amount)
-	if err != nil {
-		return
-	}
-	if err := vm.Execute(); err != nil {
-		return
-	}
-	var signedTx bytes.Buffer
-	redeemTx.Serialize(&signedTx)
-	fmt.Println(hex.EncodeToString(signedTx.Bytes()))
-}
-
-func main() {
-	//_ = CreateTransaction("5KPhot5fJ3x1TaPpCJGn6UPZRP7MqKEExDed5R39AzPFquQZ4zW", "35XLRj4WPu7FifEWzMsRvWvn9bNng9vhd5", 1000, "73c9fec091af7d5fa74650e758b40b4f9895404d1cb95193b6ec059a541dd44f", &chaincfg.MainNetParams)
-	//_ = CreateTransaction("93HajtnaDxrDtKbzQxRpUnr8cZYjerc9pLQaePM3jXfjerHWuvh", "mzfrHhpyqVdBYPUtoRtuuoBT9bh9cFG388", 1000, "75062854f755f258f86d940eea66bcc59b2bf80222aee985406b693964819a62", &chaincfg.TestNet3Params)
-
-
-	//transaction, err := OriginalCreateTransaction("5HusYj2b2x4nroApgfvaSfKYZhRbKFH41bVyPooymbC6KfgSXdD", "1KKKK6N21XKo48zWKuQKXdvSsCf95ibHFa", 91234, "81b4c832d70cb56ff957589752eb4125a4cab78a25a8fc52d6a09e5bd4404d48")
-
-
-	//transaction, err := OriginalCreateTransaction("5HusYj2b2x4nroApgfvaSfKYZhRbKFH41bVyPooymbC6KfgSXdD", "1KKKK6N21XKo48zWKuQKXdvSsCf95ibHFa", 91234, "81b4c832d70cb56ff957589752eb4125a4cab78a25a8fc52d6a09e5bd4404d48")
-
-	//TestNet from n3EXumZHtMWpTbtCPTFNhE98KFQfYUTAcL
-	 OriginalCreateTransaction("93HajtnaDxrDtKbzQxRpUnr8cZYjerc9pLQaePM3jXfjerHWuvh", "mzfrHhpyqVdBYPUtoRtuuoBT9bh9cFG388", 1000, "c082f9131467fa8abb9cd4646adfde35cfabc6de49d5d2295d222d28b7768b63")
-
-
-
-}
+//
+//func OriginalCreateTransaction(secret string, destination string, amount int64, txHash string)  {
+//	//chain :=  &chaincfg.MainNetParams
+//	chain :=  &chaincfg.TestNet3Params
+//
+//	//var transaction Transaction
+//	wif, err := btcutil.DecodeWIF(secret)
+//	//if err != nil {
+//	//	return Transaction{}, err
+//	//}
+//	//addresspubkey, _ := btcutil.NewAddressPubKey(wif.PrivKey.PubKey().SerializeUncompressed(), chain)
+//	//sourceTx := wire.NewMsgTx(wire.TxVersion)
+//	//sourceUtxoHash, _ := chainhash.NewHashFromStr(txHash)
+//	//sourceUtxo := wire.NewOutPoint(sourceUtxoHash, 0)
+//	//sourceTxIn := wire.NewTxIn(sourceUtxo, nil, nil)
+//
+//	//sourceAddress, err := btcutil.DecodeAddress(addresspubkey.EncodeAddress(),chain)
+//	//if err != nil {
+//	//	return Transaction{}, err
+//	//}
+//
+//	//sourcePkScript, _ := txscript.PayToAddrScript(sourceAddress)
+//	//sourceTxOut := wire.NewTxOut(amount, sourcePkScript)
+//	//sourceTx.AddTxIn(sourceTxIn)
+//	//sourceTx.AddTxOut(sourceTxOut)
+//	//sourceTxHash := sourceTx.TxHash()
+//
+//	redeemTx := wire.NewMsgTx(wire.TxVersion)
+//
+//	sourceTxHash, _ := chainhash.NewHashFromStr(txHash)
+//	prevOut := wire.NewOutPoint(sourceTxHash, 0)
+//	redeemTxIn := wire.NewTxIn(prevOut, nil, nil)
+//	redeemTx.AddTxIn(redeemTxIn)
+//
+//	destinationAddress, err := btcutil.DecodeAddress(destination, chain)
+//	destinationPkScript, _ := txscript.PayToAddrScript(destinationAddress)
+//	redeemTxOut := wire.NewTxOut(amount, destinationPkScript)
+//	redeemTx.AddTxOut(redeemTxOut)
+//
+//	inputScript,_ := hex.DecodeString("76a914ee37c1c620fdee0bcab60148719ed839b122b2d388ac")
+//
+//	sigScript, err := txscript.SignatureScript(redeemTx, 0, inputScript, txscript.SigHashAll, wif.PrivKey, false)
+//	if err != nil {
+//		return
+//	}
+//	redeemTx.TxIn[0].SignatureScript = sigScript
+//	flags := txscript.StandardVerifyFlags
+//	vm, err := txscript.NewEngine(inputScript, redeemTx, 0, flags, nil, nil, amount)
+//	if err != nil {
+//		return
+//	}
+//	if err := vm.Execute(); err != nil {
+//		return
+//	}
+//	var signedTx bytes.Buffer
+//	redeemTx.Serialize(&signedTx)
+//	fmt.Println(hex.EncodeToString(signedTx.Bytes()))
+//}
