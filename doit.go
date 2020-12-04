@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"github.com/btcsuite/btcd/chaincfg"
+	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"github.com/btcsuite/btcd/txscript"
 	"github.com/btcsuite/btcd/wire"
 	"github.com/btcsuite/btcutil"
@@ -34,28 +35,19 @@ func main() {
 
 func CreateTransaction(secret string, destination string, amount int64, txHash string, chain *chaincfg.Params ) (error) {
 	wif, _ := btcutil.DecodeWIF(secret)
-
 	addr, _ := btcutil.DecodeAddress(destination, chain)
 	fmt.Println("string addr", addr.String())
-
 	p2shAddr, _ := txscript.PayToAddrScript(addr)
 	fmt.Println("string p2shAddr", hex.EncodeToString(p2shAddr))
-
-
-
 	utxOut := wire.NewTxOut(amount, p2shAddr)
-	incomingTx := &wire.MsgTx{
-		TxIn:  []*wire.TxIn{{}},
-		TxOut: []*wire.TxOut{utxOut},
-	}
 
+	incomingTXHash, _ := chainhash.NewHashFromStr(txHash)
 	prevOut := wire.OutPoint{
-		Hash:  incomingTx.TxHash(),
+		Hash:  *incomingTXHash,
 		Index: 0,
 	}
 
-	fmt.Println("incomingTx.TxHash()", incomingTx.TxHash().String())
-
+	fmt.Println("incomingTx.TxHash()",incomingTXHash)
 
 	outgoingTx := &wire.MsgTx{
 		TxIn: []*wire.TxIn{{
@@ -63,6 +55,7 @@ func CreateTransaction(secret string, destination string, amount int64, txHash s
 		}},
 		TxOut: []*wire.TxOut{utxOut},
 	}
+
 	sigHashes := txscript.NewTxSigHashes(outgoingTx)
 
 	witness, script, _ := ComputeInputScript(wif, outgoingTx, utxOut, 0,sigHashes, txscript.SigHashAll, chain)
@@ -149,7 +142,7 @@ func ComputeInputScript(wif *btcutil.WIF, tx *wire.MsgTx, output *wire.TxOut,	in
 
 	// Generate a valid witness stack for the input.
 	witnessScript, err := txscript.WitnessSignature(
-		tx, sigHashes, inputIndex, output.Value, witnessProgram,
+		tx, sigHashes, inputIndex, 10000, witnessProgram,
 		hashType, privKey, true,
 	)
 	if err != nil {
