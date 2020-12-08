@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0eba3cf0-7acd-489b-a97a-cf18fb0db2ae" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/address_generation_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/qredoTX_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/segwit_manualsign_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/segwit_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/segwit_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/segwit_manualsign_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/segwit_manualsign_test.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -163,11 +160,6 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/segwit_manualsign_test.go</url>
-          <line>109</line>
-          <option name="timeStamp" value="11" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/../go/src/github.com/btcsuite/btcd/txscript/sign.go</url>
           <line>31</line>
