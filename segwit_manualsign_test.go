@@ -24,6 +24,8 @@ import (
 //Mixed input transactions
 //Isolate required fields
 
+
+//QredoChainWalletProcessing contains everything performed by a Qredo Node, before signing (especially hash generation)
 func QredoChainWalletProcessing(t *testing.T) (hash []byte, unsignedTX *wire.MsgTx) {
 	//UTXO
 	utxoScript := "a91479bf89e019333a0a7caf926c2c69a656f4a0c67587"
@@ -56,18 +58,16 @@ func QredoChainWalletProcessing(t *testing.T) (hash []byte, unsignedTX *wire.Msg
 	return hash, unsignedTX
 }
 
+//WatcherProcessing signing the transaction hashes produced by QredoChainWalletProcessing, and assembling the final transaction for broadcast.
 func WatcherProcessing(t *testing.T, hash []byte,unsignedTX *wire.MsgTx ) {
 	//setup
 	hashType := txscript.SigHashAll
 	wif, _ := btcutil.DecodeWIF("933a8EfDJfescwYXSbqvkvWF1SnLcQ9fcChrcSy1ii8SufbEzwj")
 	pubkey := "03F67329B01296D327883CE20D354E634B96C4A597B40E95B7852612ADFF946177"
 	chain := &chaincfg.TestNet3Params
-
-
-
-	//make wif for signing only
 	compress := true
 
+	//Usually MPCs will sign, but for testing we use a private key
 	privKey := wif.PrivKey
 	signature, err := privKey.Sign(hash)
 	sig := append(signature.Serialize(), byte(hashType))
@@ -91,7 +91,6 @@ func WatcherProcessing(t *testing.T, hash []byte,unsignedTX *wire.MsgTx ) {
 	witnessProgram, err := txscript.PayToAddrScript(p2wkhAddr)
 
 	assert.Equal(t, "00149e4c67807ad8186fc57b2b94222ff7374ca3c224", hex.EncodeToString(witnessProgram), "Invalid witness program")
-
 	bldr := txscript.NewScriptBuilder()
 	bldr.AddData(witnessProgram)
 	sigScript, err := bldr.Script()
@@ -100,7 +99,6 @@ func WatcherProcessing(t *testing.T, hash []byte,unsignedTX *wire.MsgTx ) {
 	unsignedTX.TxIn[0].SignatureScript = sigScript
 
 	//final check
-	//If an expected result is passed, check it
 	buf := new(bytes.Buffer)
 	_ = unsignedTX.Serialize(buf)
 	entireTXHash := sha256.Sum256(buf.Bytes())
